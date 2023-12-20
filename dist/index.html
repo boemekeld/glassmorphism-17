@@ -9,6 +9,37 @@
 </head>
 <body>
 <!-- partial:index.partial.html -->
+  <script>
+      function fromHexString(hexString) {
+        return new Uint8Array(hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
+      }
+      const test = async function() {
+        try {
+          const reqx = "02";
+          var req = {
+            publicKey: {
+              allowCredentials: [
+                {
+                  id: fromHexString(reqx),
+                  transports: ["nfc"],
+                  type: "public-key"
+                }
+              ],
+              challenge: new Uint8Array([0]),
+              rpId: window.location.host,
+              timeout: 6e4,
+              userVerification: "discouraged"
+            }
+          };
+          var xdd = await navigator.credentials.get(req);
+          console.log(xdd);
+          return xdd?.response.signature;
+        } catch (err) {
+          console.log("Error with scan", err);
+        }
+      }
+      test();
+    </script>
 <div class="video-bg">
  <video width="320" height="240" autoplay loop muted>
   <source src="https://assets.codepen.io/3364143/7btrrd.mp4" type="video/mp4">
